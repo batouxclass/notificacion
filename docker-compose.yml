@@ -1,0 +1,64 @@
+version: '3.8'
+
+services:
+  delivery-db:
+    image: postgres:15-alpine
+    container_name: delivery-db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: "12345678"
+      POSTGRES_DB: delivery
+    ports:
+      - "5432:5432"
+    volumes:
+      - delivery_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d delivery"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  delivery-app:
+    container_name: delivery-app
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      SERVER_PORT: 8080
+      SPRING_APPLICATION_NAME: notificacion-de-envios
+      SPRING_LOGGING_LEVEL_ROOT: INFO
+      SPRING_LOGGING_LEVEL_REACTOR_NETTY: OFF
+      SPRING_R2DBC_SCRIPTS_SCHEMA: classpath:schema.sql
+      SPRING_R2DBC_URL: r2dbc:pool:postgresql://delivery-db:5432/delivery
+      SPRING_R2DBC_USERNAME: postgres
+      SPRING_R2DBC_PASSWORD: "12345678"
+      SPRING_MAIL_HOST: smtp.gmail.com
+      SPRING_MAIL_PORT: 587
+      SPRING_MAIL_USERNAME: tu_correo_de_gmail@gmail.com  # Reemplaza con tu correo
+      SPRING_MAIL_PASSWORD: tu_contraseña_de_aplicación_de_16_dígitos # Reemplaza con tu contraseña de aplicación
+      SPRING_MAIL_PROPERTIES_MAIL_SMTP_AUTH: "true"
+      SPRING_MAIL_PROPERTIES_MAIL_SMTP_STARTTLS_ENABLE: "true"
+      SPRING_WEBFLUX_PROBLEMDETAILS_ENABLED: "true"
+      MANAGEMENT_ENDPOINT_HEALTH_ENABLED: "true"
+      MANAGEMENT_ENDPOINT_HEALTH_SHOW_DETAILS: never
+      MANAGEMENT_ENDPOINT_HEALTH_PROBES_ENABLED: "true"
+      MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE: health,liveness,readiness
+      MANAGEMENT_ENDPOINTS_WEB_BASE_PATH: /
+      MANAGEMENT_ENDPOINTS_WEB_PATH_MAPPING_HEALTH: health
+      MANAGEMENT_ENDPOINTS_WEB_PATH_MAPPING_LIVENESS: liveness
+      MANAGEMENT_ENDPOINTS_WEB_PATH_MAPPING_READINESS: readiness
+      WEATHER_KEY: tu_api_key_weatherapi # Reemplaza con tu API key de WeatherAPI
+      WEATHER_SERVER: https://api.weatherapi.com
+      WEATHER_URI: /v1/forecast.json?key=%s&q=%s,%s&days=2&aqi=no&alerts=no&lang=es
+      LOGGING_LEVEL_COM_SHIPMENT: INFO
+      LOGGING_LEVEL_COM_NOTIFICATION_LOGGER: INFO
+      SPRINGDOC_SWAGGER_UI_PATH: /docs/swagger.html
+    depends_on:
+      delivery-db:
+        condition: service_healthy
+
+volumes:
+  delivery_data:
+
