@@ -15,7 +15,7 @@ spring:
       schema: classpath:schema.sql
     url: r2dbc:pool:postgresql://localhost:5432/delivery
     username: postgres
-    password: 12345678
+    password: tu_contraseña_de_base_de_datos
     #pool:
      # initial-size: 5
      # max-size: 20

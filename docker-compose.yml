@@ -33,7 +33,7 @@ services:
       SPRING_R2DBC_SCRIPTS_SCHEMA: classpath:schema.sql
       SPRING_R2DBC_URL: r2dbc:pool:postgresql://delivery-db:5432/delivery
       SPRING_R2DBC_USERNAME: postgres
-      SPRING_R2DBC_PASSWORD: "12345678"
+      SPRING_R2DBC_PASSWORD: "tu_contraseña_de_base_de_datos"
       SPRING_MAIL_HOST: smtp.gmail.com
       SPRING_MAIL_PORT: 587
       SPRING_MAIL_USERNAME: tu_correo_de_gmail@gmail.com  # Reemplaza con tu correo
