@@ -23,7 +23,7 @@ public class WebClientServiceTest {
     private WebClientService webClientService;
 
     @Test
-    void getWebClient_shouldReturnWebClientWithCorrectBaseUrl() {
+    void getWebClientShouldReturnWebClientWithCorrectBaseUrlTest() {
         String testUrl = "http://example.com";
         when(webClientBuilderMock.baseUrl(testUrl)).thenReturn(webClientBuilderMock);
         when(webClientBuilderMock.build()).thenReturn(webClientMock);
